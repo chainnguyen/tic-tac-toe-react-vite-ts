@@ -1,9 +1,12 @@
+import { StateType } from '@/types/game'
+
 export interface BoardPropType {
-  type: number
+  state: StateType
   onClick: (i: number) => void
 }
 
 export interface BoardBoxPropType {
-  value: number
+  id: number
+  value: string
   onClick: (i: number) => void
 }

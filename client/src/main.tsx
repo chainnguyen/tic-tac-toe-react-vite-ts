@@ -7,7 +7,7 @@ import { store } from './store'
 // Components
 import App from './App'
 // Others
-import * as serviceWorker from './serviceWorker';
+import * as serviceWorker from './serviceWorker'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

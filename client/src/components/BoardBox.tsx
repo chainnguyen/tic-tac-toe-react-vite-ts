@@ -5,8 +5,8 @@ function BoardBox(props: BoardBoxPropType) {
   return (
     <>
       <button
-        className="square"
-        onClick={() => props.onClick(+props.value)}>
+        className="board-box"
+        onClick={() => props.onClick(+props.id)}>
         {props.value}
       </button>
     </>

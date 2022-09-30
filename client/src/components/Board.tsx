@@ -1,25 +1,19 @@
-// Core
-import { useMemo } from 'react'
 // Components
 import BoardBox from '@/components/BoardBox'
 // Types
 import { BoardPropType } from '@/types/board'
 
-function Board(props: BoardPropType) {
-  const arrBoard = useMemo<number[]>(
-    () => [...Array(props.type * props.type).keys()],
-    [props.type]
-  )
-
+function Board({ state, onClick }: BoardPropType) {
   return (
-    <div>
-      {arrBoard.map((index: number) =>
+    <>
+      {state.arrBoard.map((item: string, index: number) =>
         <BoardBox
           key={index}
-          value={index}
-          onClick={(i: number) => props.onClick(i)}/>
+          id={index}
+          value={item}
+          onClick={(i: number) => onClick(i)}/>
       )}
-    </div>
+    </>
   )
 }
 

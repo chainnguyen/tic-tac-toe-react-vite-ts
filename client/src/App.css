@@ -1,7 +1,6 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 15px;
   text-align: center;
 }
 
@@ -38,4 +37,36 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.game-control {
+  margin-bottom: 20px;
+}
+
+.game-control *:not(:last-child) {
+  margin-right: 20px;
+}
+
+.game-control__type {
+  width: 100%;
+  max-width: 120px;
+  height: 30px;
+}
+
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  width: calc((var(--layout-by-type) / 3) * 36.12vw);
+  max-width: 26.1vw;
+  margin: 0 auto;
+}
+
+.board-box {
+  flex-basis: calc((100% / var(--layout-by-type)) - 2px);
+  aspect-ratio: 1 / 1;
+  font-size: 4.5vw;
+  font-weight: bold;
 }
