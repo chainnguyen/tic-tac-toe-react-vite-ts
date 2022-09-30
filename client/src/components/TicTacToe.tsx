@@ -10,10 +10,14 @@ import {
 // Components
 import Board from '@/components/Board'
 // Types
-import { ReducerActionType } from '@/types/global'
-import { TicTacToePropType, StateType } from '@/types/game'
+import { ReducerActionType } from '@/types/common/global'
+import {
+  TicTacToePropType,
+  TicTacToeRefType,
+  StateType
+} from '@/types/game'
 
-const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<{}>) => {
+const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTacToeRefType>) => {
   const initialState: StateType = {
     type: props.type,
     xIsNext: true, // 'X' go first
@@ -50,7 +54,8 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<{}>) 
   }, [props.type]);
 
   useImperativeHandle(ref, () => ({
-    // Register event for TicTacToe component
+    // Register variable && event for TicTacToe component
+    state,
     reset: () => resetGame()
   }))
 
@@ -84,7 +89,8 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<{}>) 
   }
 
   const resetGame = (): void => {
-    if (state.playing) return
+    if (state.playing && !confirm('Are you sure')) return
+
     dispatch({
       type: 'RESET',
       payload: { arrBoard: memoArrBoard }
@@ -93,7 +99,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<{}>) 
 
   return (
     <div className="board-container"
-         style={{["--layout-by-type" as string]: state.type}}>
+         style={{ ['--layout-by-type' as string]: state.type }}>
       <Board
         state={state}
         onClick={(i: number) => handleClick(i)}

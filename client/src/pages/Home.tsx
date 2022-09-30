@@ -1,48 +1,25 @@
 // Core
-import {
-  useState,
-  useEffect,
-  useRef,
-  MutableRefObject
-} from 'react'
-// Hooks
-import { useSocket } from '@/hooks/useSocket'
+import { useState, useRef } from 'react'
 // Components
 import TicTacToe from '@/components/TicTacToe'
 // Others
 import { LIST_TYPES } from '@/enums/game.enum'
+// Types
+import { TicTacToeRefType } from '@/types/game'
 
 function Home() {
-  const {
-    socketConnect,
-    socketEmit,
-    socketListen,
-    socketDisconnect
-  } = useSocket()
-
-  let [count, setCount] = useState<number>(0)
-  const ticTacToeRef = useRef<HTMLDivElement | null>(null)
-  const [typeGame, setTypeGame] = useState<number>(LIST_TYPES[0])
-
-  useEffect(() => {
-    socketConnect('ws://localhost:5000')
-
-    // When connected, look for when the server emits the updated count
-    socketListen('UPDATE_COUNT', (countFromServer: number) => {
-      setCount(countFromServer)
-    })
-    return () => { socketDisconnect() }
-  }, [count]);
-
-  const handleCount = () => {
-    count++
-    socketEmit('SET_COUNT', count)
-  }
+  const ticTacToeRef = useRef<TicTacToeRefType | null>(null)
+  const [typeGame, setTypeGame] = useState<number>(LIST_TYPES[0].type)
 
   /**
-   * @param type
+   * Switch type of game rely on LIST_TYPES enum
+   * @param type{number}
    */
-  const switchTypeGame = (type: number): void => { setTypeGame(type) }
+  const switchTypeGame = (type: number): void => {
+    // Block action while playing game
+    if (ticTacToeRef.current?.state.playing) return
+    setTypeGame(type)
+  }
 
   const resetGame = (): void => {
     ticTacToeRef.current?.reset()
@@ -52,21 +29,27 @@ function Home() {
     <>
       <section className="game-control">
         <select className="game-control__type"
+                disabled={ticTacToeRef.current?.state?.playing}
                 value={typeGame}
                 onChange={e => switchTypeGame(+e.target.value)}
         >
-          {LIST_TYPES.map((type: number) => (
-            <option key={type} value={type}>
-              {type}
+          {LIST_TYPES.map((item) => (
+            <option key={item.type} value={item.type}>
+              {item.type}
             </option>
           ))}
         </select>
 
-        <button type="button" onClick={resetGame}>Reset</button>
+        <button className="game-control__reset"
+                type="button"
+                disabled={!ticTacToeRef.current?.state?.playing}
+                onClick={resetGame}>
+          Reset
+        </button>
       </section>
 
       <section className="sec-game">
-        <TicTacToe ref={ticTacToeRef} type={typeGame}/>
+        <TicTacToe ref={ticTacToeRef} type={typeGame}/>,
       </section>
     </>
   )

@@ -47,10 +47,11 @@
   margin-right: 20px;
 }
 
-.game-control__type {
+.game-control__type, .game-control__reset {
   width: 100%;
   max-width: 120px;
   height: 30px;
+  cursor: pointer;
 }
 
 .board-container {
@@ -60,13 +61,14 @@
   flex-wrap: wrap;
   gap: 2px;
   width: calc((var(--layout-by-type) / 3) * 36.12vw);
-  max-width: 26.1vw;
+  min-width: 35vw;
+  max-width: 35vw;
   margin: 0 auto;
 }
 
 .board-box {
   flex-basis: calc((100% / var(--layout-by-type)) - 2px);
   aspect-ratio: 1 / 1;
-  font-size: 4.5vw;
+  font-size: var(--font-size-by-type);
   font-weight: bold;
 }

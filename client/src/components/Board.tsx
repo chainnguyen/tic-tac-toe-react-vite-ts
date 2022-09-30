@@ -10,6 +10,7 @@ function Board({ state, onClick }: BoardPropType) {
         <BoardBox
           key={index}
           id={index}
+          type={state.type}
           value={item}
           onClick={(i: number) => onClick(i)}/>
       )}

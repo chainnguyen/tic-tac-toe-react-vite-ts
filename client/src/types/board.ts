@@ -8,5 +8,6 @@ export interface BoardPropType {
 export interface BoardBoxPropType {
   id: number
   value: string
+  type: number
   onClick: (i: number) => void
 }
