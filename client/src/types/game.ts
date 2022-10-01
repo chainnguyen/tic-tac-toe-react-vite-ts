@@ -6,10 +6,10 @@ export interface StateType {
 }
 
 export interface TicTacToeRefType {
-  state: StateType
   reset: () => void
 }
 
 export interface TicTacToePropType {
   type: number
+  controller: any
 }

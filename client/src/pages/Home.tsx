@@ -10,14 +10,11 @@ import { TicTacToeRefType } from '@/types/game'
 function Home() {
   const ticTacToeRef = useRef<TicTacToeRefType | null>(null)
   const [typeGame, setTypeGame] = useState<number>(LIST_TYPES[0].type)
+  const [playing, setPlaying] = useState<boolean>(false)
 
-  /**
-   * Switch type of game rely on LIST_TYPES enum
-   * @param type{number}
-   */
   const switchTypeGame = (type: number): void => {
     // Block action while playing game
-    if (ticTacToeRef.current?.state.playing) return
+    if (playing) return
     setTypeGame(type)
   }
 
@@ -29,7 +26,7 @@ function Home() {
     <>
       <section className="game-control">
         <select className="game-control__type"
-                disabled={ticTacToeRef.current?.state?.playing}
+                disabled={playing}
                 value={typeGame}
                 onChange={e => switchTypeGame(+e.target.value)}
         >
@@ -42,14 +39,17 @@ function Home() {
 
         <button className="game-control__reset"
                 type="button"
-                disabled={!ticTacToeRef.current?.state?.playing}
+                disabled={!playing}
                 onClick={resetGame}>
           Reset
         </button>
       </section>
 
       <section className="sec-game">
-        <TicTacToe ref={ticTacToeRef} type={typeGame}/>,
+        <TicTacToe ref={ticTacToeRef}
+                   type={typeGame}
+                   controller={setPlaying}
+        />
       </section>
     </>
   )

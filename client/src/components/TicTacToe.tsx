@@ -31,7 +31,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
     switch (type) {
       case 'UPDATE_TYPE':
       case 'PLAYING':
-        return { ...state, ...payload  }
+        return { ...state, ...payload }
       case 'RESET':
         return { ...initialState, ...payload }
       default: return state
@@ -55,15 +55,9 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
 
   useImperativeHandle(ref, () => ({
     // Register variable && event for TicTacToe component
-    state,
     reset: () => resetGame()
   }))
 
-
-  /**
-   * Handle cursor of user
-   * @param index{number}
-   */
   const handleClick = (index: number): void => {
     const updateArrBoard: string[] = [...state.arrBoard]
     if (calculateWinner(updateArrBoard) || updateArrBoard[index]) return
@@ -77,13 +71,9 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
         arrBoard: updateArrBoard
       }
     })
+    props.controller(true)
   }
 
-  /**
-   * Calculate the winner among the qualified
-   * @param board{string[]}
-   * @return {boolean}
-   */
   const calculateWinner = (board: string[]): boolean => {
     return false
   }
@@ -95,6 +85,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
       type: 'RESET',
       payload: { arrBoard: memoArrBoard }
     })
+    props.controller(false)
   }
 
   return (
