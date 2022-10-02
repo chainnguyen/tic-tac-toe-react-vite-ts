@@ -66,9 +66,20 @@
   margin: 0 auto;
 }
 
+.board-container.finished {
+  pointer-events: none;
+}
+
 .board-box {
   flex-basis: calc((100% / var(--layout-by-type)) - 2px);
   aspect-ratio: 1 / 1;
   font-size: var(--font-size-by-type);
   font-weight: bold;
+}
+
+.board-box.reward-box {
+  transform: scale(1.06);
+  will-change: scale, background-color;
+  background-color: #2a2d63;
+  transition: all 0.2s ease-in;
 }
