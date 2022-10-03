@@ -1,8 +1,13 @@
+import { BoardType } from '@/types/board'
+
+type StatusGame = 'unfinished' | 'finished' | 'full-board'
+
 export interface StateType {
   type: number
+  status: StatusGame
   xIsNext: boolean
   playing: boolean
-  arrBoard: string[]
+  arrBoard: BoardType[]
 }
 
 export interface TicTacToeRefType {
@@ -12,4 +17,13 @@ export interface TicTacToeRefType {
 export interface TicTacToePropType {
   type: number
   controller: any
+}
+
+export interface TicTacToeWinnerType {
+  status: StatusGame
+  resultBoardWon: BoardType[]
+}
+
+export interface CalculatePropType {
+  type: number
 }

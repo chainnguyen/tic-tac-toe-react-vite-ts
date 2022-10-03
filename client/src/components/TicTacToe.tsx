@@ -7,6 +7,9 @@ import {
   useImperativeHandle,
   ForwardedRef
 } from 'react'
+// Hooks
+import { cloneDeep } from 'lodash-es'
+import { useCalculate } from '@/hooks/useCalculate'
 // Components
 import Board from '@/components/Board'
 // Types
@@ -16,10 +19,12 @@ import {
   TicTacToeRefType,
   StateType
 } from '@/types/game'
+import { BoardType } from '@/types/board'
 
 const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTacToeRefType>) => {
   const initialState: StateType = {
     type: props.type,
+    status: 'unfinished',
     xIsNext: true, // 'X' go first
     playing: false,
     arrBoard: [],
@@ -31,6 +36,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
     switch (type) {
       case 'UPDATE_TYPE':
       case 'PLAYING':
+      case 'FINISHED':
         return { ...state, ...payload }
       case 'RESET':
         return { ...initialState, ...payload }
@@ -38,10 +44,14 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
     }
   }
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState)
+  const { ticTacToeWinner } = useCalculate({ type: state.type })
 
   const memoArrBoard = useMemo<string[]>(() =>
-    Array(props.type * props.type).fill(''),
+    Array(props.type * props.type).fill({
+      box: '',
+      isRewardBox: false
+    }),
     [props.type]
   )
 
@@ -59,27 +69,60 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
   }))
 
   const handleClick = (index: number): void => {
-    const updateArrBoard: string[] = [...state.arrBoard]
-    if (calculateWinner(updateArrBoard) || updateArrBoard[index]) return
+    const cloneArrBoard: BoardType[] = cloneDeep(state.arrBoard)
+    if (state.status === 'finished' || cloneArrBoard[index].box) return
 
-    updateArrBoard[index] = state.xIsNext ? 'X' : 'O'
+    cloneArrBoard[index] = {
+      ...cloneArrBoard[index],
+      box: state.xIsNext ? 'X' : 'O',
+    }
+
     dispatch({
       type: 'PLAYING',
       payload: {
         playing: true,
         xIsNext: !state.xIsNext,
-        arrBoard: updateArrBoard
+        arrBoard: cloneArrBoard
       }
     })
-    props.controller(true)
+    !state.playing && props.controller(true)
+
+    handleWinner(cloneArrBoard)
   }
 
-  const calculateWinner = (board: string[]): boolean => {
-    return false
+  const handleWinner = (board: BoardType[]): void => {
+    const { status, resultBoardWon } = ticTacToeWinner(board)
+
+    if (['finished', 'full-board'].includes(status)) {
+      dispatch({
+        type: 'FINISHED',
+        payload: {
+          status,
+          playing: false,
+          arrBoard: resultBoardWon
+        }
+      })
+    }
   }
 
-  const resetGame = (): void => {
-    if (state.playing && !confirm('Are you sure')) return
+  const renderMessage = (): string => {
+    let message: string
+
+    switch (state.status) {
+      case 'finished':
+        message = 'Winner: ' + (!state.xIsNext ? 'X' : 'O')
+        break
+      case 'full-board':
+        message = 'Cuộc sống mà! Hơn thua nhau làm gì bạn ơi...'
+        break
+      default:
+        message = state.xIsNext ? 'Your turn' : `Enemy's turn`
+    }
+    return message
+  }
+
+  const resetGame = (type: 'manual' | 'finished' = 'manual'): void => {
+    if (type !== 'finished' && state.playing && !confirm('Are you sure')) return
 
     dispatch({
       type: 'RESET',
@@ -89,12 +132,20 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
   }
 
   return (
-    <div className="board-container"
+    <div className="game-container"
          style={{ ['--layout-by-type' as string]: state.type }}>
-      <Board
-        state={state}
-        onClick={(i: number) => handleClick(i)}
-      />
+
+      <h1 className="game-message">{renderMessage()}</h1>
+
+      <div className={
+        `board-container
+        ${state.status === 'finished' ? 'finished' : ''}`
+      }>
+        <Board
+          state={state}
+          onClick={(i: number) => handleClick(i)}
+        />
+      </div>
     </div>
   )
 })
