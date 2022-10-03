@@ -22,13 +22,11 @@ import {
 import { BoardType } from '@/types/board'
 
 const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTacToeRefType>) => {
-  const { ticTacToeWinner } = useCalculate()
-
   const initialState: StateType = {
     type: props.type,
+    status: 'unfinished',
     xIsNext: true, // 'X' go first
     playing: false,
-    finished: false,
     arrBoard: [],
   }
 
@@ -47,6 +45,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
   }
 
   const [state, dispatch] = useReducer(reducer, initialState)
+  const { ticTacToeWinner } = useCalculate({ type: state.type })
 
   const memoArrBoard = useMemo<string[]>(() =>
     Array(props.type * props.type).fill({
@@ -71,7 +70,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
 
   const handleClick = (index: number): void => {
     const cloneArrBoard: BoardType[] = cloneDeep(state.arrBoard)
-    if (state.finished || cloneArrBoard[index].box) return
+    if (state.status === 'finished' || cloneArrBoard[index].box) return
 
     cloneArrBoard[index] = {
       ...cloneArrBoard[index],
@@ -98,26 +97,28 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
       dispatch({
         type: 'FINISHED',
         payload: {
+          status,
           playing: false,
-          finished: true,
           arrBoard: resultBoardWon
         }
       })
-
-      status === 'full-board' && renderMessage('full-board')
     }
   }
 
-  const renderMessage = (message: 'auto' | 'full-board' = 'auto'): string => {
-    if (message === 'full-board') {
-      return 'Cột sống mà! Hơn thua nhau làm gì bạn ơi...'
-    }
+  const renderMessage = (): string => {
+    let message: string
 
-    if (state.finished) {
-      return 'Winner: ' + (!state.xIsNext ? 'X' : `O`)
+    switch (state.status) {
+      case 'finished':
+        message = 'Winner: ' + (!state.xIsNext ? 'X' : 'O')
+        break
+      case 'full-board':
+        message = 'Cuộc sống mà! Hơn thua nhau làm gì bạn ơi...'
+        break
+      default:
+        message = state.xIsNext ? 'Your turn' : `Enemy's turn`
     }
-
-    return state.xIsNext ? 'Your turn' : `Enemy's turn`
+    return message
   }
 
   const resetGame = (type: 'manual' | 'finished' = 'manual'): void => {
@@ -138,7 +139,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
 
       <div className={
         `board-container
-        ${state.finished ? 'finished' : ''}`
+        ${state.status === 'finished' ? 'finished' : ''}`
       }>
         <Board
           state={state}

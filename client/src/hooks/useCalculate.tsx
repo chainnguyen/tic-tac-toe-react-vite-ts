@@ -1,26 +1,37 @@
+// Core
+import { useMemo } from 'react'
 // Types
 import { BoardType } from '@/types/board'
-import { TicTacToeWinnerType } from '@/types/game'
+import { CalculatePropType, TicTacToeWinnerType } from '@/types/game'
 
-export const useCalculate = () => {
+export const useCalculate = ({ type }: CalculatePropType) => {
+  const memoListReward = useMemo<number[][]>(() => {
+    // TODO: Take two cross lines
+    const arrLinesByType: string[] = Array(type).fill('')
+    const arrBoard: number[] = [...Array(type * type).keys()]
+
+    return arrLinesByType.reduce((arr: number[][], _: string, rootIdx: number) => {
+      const horizontalLines: number[] = arrBoard.slice(rootIdx * type, rootIdx * type + type)
+      const verticalLines: number[] = arrLinesByType.map(
+        (_, childIdx: number) => arrBoard[rootIdx + childIdx * type]
+      )
+
+      arr.push(horizontalLines)
+      arr.push(verticalLines)
+      return arr
+    }, [])
+  }, [type])
 
   const ticTacToeWinner = (board: BoardType[]): TicTacToeWinnerType => {
     const cloneBoard: BoardType[] = [...board]
     const initObj: TicTacToeWinnerType = { status: 'unfinished', resultBoardWon: cloneBoard }
+
     if (!cloneBoard.length) return initObj
 
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6]
-    ];
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
+    // TODO: Logical dynamic transformation
+    for (let rootIdx = 0; rootIdx < memoListReward.length; rootIdx++) {
+      const [a, b, c] = memoListReward[rootIdx]
+
       if (
         cloneBoard[a].box &&
         cloneBoard[a].box === cloneBoard[b].box &&

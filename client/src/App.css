@@ -54,6 +54,11 @@
   cursor: pointer;
 }
 
+.game-container .game-message {
+  font-size: 3vw;
+  margin: 0 0 10px;
+}
+
 .board-container {
   display: flex;
   justify-content: center;
