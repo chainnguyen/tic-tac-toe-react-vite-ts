@@ -15,13 +15,36 @@ io.on('connection', (socket) => {
   socket.on('disconnect', (reason) => {
     console.log(`[DISCONNECTED] - ${socket.id}`)
     if (reason === 'io server disconnect') {
-      // the disconnection was initiated by the server, you need to reconnect manually
+      // The disconnection was initiated by the server, you need to reconnect manually
       socket.connect();
     }
   });
 
   // Listen event from client
-  socket.on('SET_COUNT', (val) => {
-    io.emit('UPDATE_COUNT', val);
-  });
+  eventsCallCenter(socket)
 });
+
+
+function eventsCallCenter (socket) {
+  socket.on('SWITCH_TYPE_GAME', (type) => {
+    io.emit('UPDATE_TYPE_GAME', type);
+  });
+
+  socket.on('GAME_STATUS', (status) => {
+    io.emit('UPDATE_GAME_STATUS', status)
+  });
+
+  socket.on('PLAYING_ACTION', (payload) => {
+    io.emit('UPDATE_PLAYING_ACTION', payload)
+  });
+
+  socket.on('WAS_WINNER', (payload) => {
+    io.emit('UPDATE_WAS_WINNER', payload)
+    io.emit('UPDATE_GAME_STATUS', payload.status)
+  });
+
+  socket.on('RESET_GAME', (payload) => {
+    io.emit('UPDATE_RESET_GAME', payload)
+    io.emit('UPDATE_GAME_STATUS', 'unfinished')
+  });
+}

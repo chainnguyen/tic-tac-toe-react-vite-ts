@@ -67,7 +67,7 @@
   gap: 2px;
   width: calc((var(--layout-by-type) / 3) * 36.12vw);
   min-width: 35vw;
-  max-width: 35vw;
+  max-width: 75vh;
   margin: 0 auto;
 }
 

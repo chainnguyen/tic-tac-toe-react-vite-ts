@@ -1,6 +1,6 @@
 import { BoardType } from '@/types/board'
 
-type StatusGame = 'unfinished' | 'finished' | 'full-board'
+export type StatusGame = 'unfinished' | 'finished' | 'full-board'
 
 export interface StateType {
   type: number

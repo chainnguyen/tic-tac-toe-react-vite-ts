@@ -6,3 +6,6 @@ export interface ReducerActionType {
   type: string
   payload?: object
 }
+
+
+export type EmitType = string | number | object
