@@ -28,18 +28,16 @@ export const useCalculate = ({ type }: CalculatePropType) => {
 
     if (!cloneBoard.length) return initObj
 
-    // TODO: Logical dynamic transformation
     for (let rootIdx = 0; rootIdx < memoListReward.length; rootIdx++) {
-      const [a, b, c] = memoListReward[rootIdx]
+      const verify: boolean = memoListReward[rootIdx].every((i: number) =>
+        cloneBoard[memoListReward[rootIdx][0]].box &&
+        (cloneBoard[memoListReward[rootIdx][0]].box === cloneBoard[i].box)
+      )
 
-      if (
-        cloneBoard[a].box &&
-        cloneBoard[a].box === cloneBoard[b].box &&
-        cloneBoard[a].box === cloneBoard[c].box
-      ) {
-        cloneBoard[a] = { ...cloneBoard[a], isRewardBox: true }
-        cloneBoard[b] = { ...cloneBoard[b], isRewardBox: true }
-        cloneBoard[c] = { ...cloneBoard[c], isRewardBox: true }
+      if (verify) {
+        memoListReward[rootIdx].forEach((i: number) => {
+          cloneBoard[i] = { ...cloneBoard[i], isRewardBox: true }
+        })
         return { status: 'finished', resultBoardWon: cloneBoard }
       }
     }

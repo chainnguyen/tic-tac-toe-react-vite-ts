@@ -9,6 +9,8 @@ import {
 } from 'react'
 // Hooks
 import { cloneDeep } from 'lodash-es'
+import { useSelector } from 'react-redux'
+import { useSocket } from '@/hooks/useSocket'
 import { useCalculate } from '@/hooks/useCalculate'
 // Components
 import Board from '@/components/Board'
@@ -20,6 +22,7 @@ import {
   StateType
 } from '@/types/game'
 import { BoardType } from '@/types/board'
+import { RootState } from '@/store/root/root-state'
 
 const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTacToeRefType>) => {
   const initialState: StateType = {
@@ -44,6 +47,8 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
     }
   }
 
+  const { socketEmit, socketListen } = useSocket()
+  const isSocketConnected = useSelector((state: RootState) => state['root'].isSocketConnected)
   const [state, dispatch] = useReducer(reducer, initialState)
   const { ticTacToeWinner } = useCalculate({ type: state.type })
 
@@ -63,6 +68,22 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
     })
   }, [props.type]);
 
+  useEffect(() => {
+    if (!isSocketConnected) return
+
+    socketListen('UPDATE_PLAYING_ACTION', (payloadFmServer: StateType) => {
+      dispatch({ type: 'PLAYING', payload: payloadFmServer })
+    })
+
+    socketListen('UPDATE_WAS_WINNER', (payloadFmServer: StateType) => {
+      dispatch({ type: 'FINISHED', payload: payloadFmServer })
+    })
+
+    socketListen('UPDATE_RESET_GAME', (payloadFmServer: StateType) => {
+      dispatch({ type: 'RESET', payload: payloadFmServer })
+    })
+  }, [isSocketConnected])
+
   useImperativeHandle(ref, () => ({
     // Register variable && event for TicTacToe component
     reset: () => resetGame()
@@ -77,15 +98,22 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
       box: state.xIsNext ? 'X' : 'O',
     }
 
-    dispatch({
-      type: 'PLAYING',
-      payload: {
-        playing: true,
-        xIsNext: !state.xIsNext,
-        arrBoard: cloneArrBoard
-      }
-    })
-    !state.playing && props.controller(true)
+    const payload: object = {
+      playing: true,
+      xIsNext: !state.xIsNext,
+      arrBoard: cloneArrBoard
+    }
+
+    // In the case socket can't connect to server or something wrong
+    if (!isSocketConnected) {
+      dispatch({ type: 'PLAYING', payload })
+      !state.playing && props.controller.setPlaying(true)
+    }
+    socketEmit('PLAYING_ACTION', payload)
+
+    if (!state.playing) {
+      socketEmit('GAME_STATUS', 'start')
+    }
 
     handleWinner(cloneArrBoard)
   }
@@ -94,14 +122,14 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
     const { status, resultBoardWon } = ticTacToeWinner(board)
 
     if (['finished', 'full-board'].includes(status)) {
-      dispatch({
-        type: 'FINISHED',
-        payload: {
-          status,
-          playing: false,
-          arrBoard: resultBoardWon
-        }
-      })
+      const payload: object = {
+        status,
+        playing: false,
+        arrBoard: resultBoardWon
+      }
+
+      !isSocketConnected && dispatch({ type: 'FINISHED', payload })
+      socketEmit('WAS_WINNER', payload)
     }
   }
 
@@ -124,11 +152,14 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
   const resetGame = (type: 'manual' | 'finished' = 'manual'): void => {
     if (type !== 'finished' && state.playing && !confirm('Are you sure')) return
 
-    dispatch({
-      type: 'RESET',
-      payload: { arrBoard: memoArrBoard }
-    })
-    props.controller(false)
+    const payload: object = { arrBoard: memoArrBoard }
+
+    // In the case socket can't connect to server or something wrong
+    if (!isSocketConnected) {
+      dispatch({ type: 'RESET', payload })
+      props.controller.setPlaying(false)
+    }
+    socketEmit('RESET_GAME', payload)
   }
 
   return (
