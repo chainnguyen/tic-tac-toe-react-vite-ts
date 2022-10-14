@@ -150,7 +150,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
   }
 
   const resetGame = (type: 'manual' | 'finished' = 'manual'): void => {
-    if (type !== 'finished' && state.playing && !confirm('Are you sure')) return
+    if (type !== 'finished' && state.playing && !confirm('Are you sure?')) return
 
     const payload: object = { arrBoard: memoArrBoard }
 

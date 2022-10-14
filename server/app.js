@@ -1,7 +1,17 @@
+// Core
 const io = require('socket.io')(5000);
+// Hooks
+const { eventsCallCenter } = require("./events-center");
+const $helper = require("./helper");
+// Global variables
+const idWarehouse = []
 
 io.on('connection', (socket) => {
   console.log(`[CONNECTED] - ${socket.id}`)
+
+  sortUsersByRoom(socket)
+  // Listen event from client
+  eventsCallCenter(io, socket)
 
   socket.on('connect_error', () => {
     setTimeout(() => {
@@ -19,32 +29,14 @@ io.on('connection', (socket) => {
       socket.connect();
     }
   });
-
-  // Listen event from client
-  eventsCallCenter(socket)
 });
 
 
-function eventsCallCenter (socket) {
-  socket.on('SWITCH_TYPE_GAME', (type) => {
-    io.emit('UPDATE_TYPE_GAME', type);
-  });
-
-  socket.on('GAME_STATUS', (status) => {
-    io.emit('UPDATE_GAME_STATUS', status)
-  });
-
-  socket.on('PLAYING_ACTION', (payload) => {
-    io.emit('UPDATE_PLAYING_ACTION', payload)
-  });
-
-  socket.on('WAS_WINNER', (payload) => {
-    io.emit('UPDATE_WAS_WINNER', payload)
-    io.emit('UPDATE_GAME_STATUS', payload.status)
-  });
-
-  socket.on('RESET_GAME', (payload) => {
-    io.emit('UPDATE_RESET_GAME', payload)
-    io.emit('UPDATE_GAME_STATUS', 'unfinished')
-  });
+function sortUsersByRoom (socket) {
+  const newRoomId = $helper.generateRoomId(idWarehouse, 15)
+  const { rooms } = socket.adapter
+  // console.log(['newRoomId'], newRoomId)
+  console.log(rooms)
+  idWarehouse.push(newRoomId)
+  socket.join('ROOM-' + newRoomId)
 }

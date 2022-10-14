@@ -25,7 +25,7 @@ function Home() {
   // Initial socket
   useEffect( () => {
     socketConnect('ws://localhost:5000')
-      .then(() => eventsCallCenter())
+      .then((): void => eventsCallCenter())
     return () => { socketDisconnect() }
   },[])
 
