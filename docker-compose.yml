@@ -1,0 +1,31 @@
+version: "3"
+services:
+  client:
+    image: node:14-alpine
+    working_dir: ${DOCKER_WORKING_DIR}
+    container_name: client
+    tty: true
+    volumes:
+      - ./client/:${DOCKER_WORKING_DIR}
+    ports:
+      - "3000:3000"
+    command: "yarn && yarn start"
+    networks:
+      - app-network
+
+  server:
+    image: node:14-alpine
+    working_dir: ${DOCKER_WORKING_DIR}
+    container_name: server
+    tty: true
+    volumes:
+      - ./server:${DOCKER_WORKING_DIR}
+    ports:
+      - "5000:5000"
+    command: "yarn && yarn start"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

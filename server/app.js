@@ -31,7 +31,6 @@ io.on('connection', (socket) => {
   });
 });
 
-
 function sortUsersByRoom (socket) {
   const newRoomId = $helper.generateRoomId(idWarehouse, 15)
   const { rooms } = socket.adapter

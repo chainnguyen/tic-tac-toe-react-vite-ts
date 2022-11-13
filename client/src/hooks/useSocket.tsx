@@ -16,7 +16,7 @@ export const useSocket = () => {
    * Connect server socket
    * @param domain{string}
    */
-  const socketConnect = async (domain: string = 'localhost:8080') => {
+  const socketConnect = async (domain: string = 'localhost:5000') => {
     socket = await io(domain)
     socket && storeDispatch(setSocketConnect(true))
   }
