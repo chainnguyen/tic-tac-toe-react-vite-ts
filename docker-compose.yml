@@ -9,7 +9,7 @@ services:
       - ./client/:${DOCKER_WORKING_DIR}
     ports:
       - "3000:3000"
-    command: "yarn && yarn start"
+    command: "yarn start"
     networks:
       - app-network
 
@@ -22,7 +22,7 @@ services:
       - ./server:${DOCKER_WORKING_DIR}
     ports:
       - "5000:5000"
-    command: "yarn && yarn start"
+    command: "yarn start"
     networks:
       - app-network
 
