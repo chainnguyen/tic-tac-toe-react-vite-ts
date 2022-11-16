@@ -6,9 +6,10 @@ import { CalculatePropType, TicTacToeWinnerType } from '@/types/game'
 
 export const useCalculate = ({ type }: CalculatePropType) => {
   const memoListReward = useMemo<number[][]>(() => {
-    // TODO: Take two cross lines
     const arrLinesByType: string[] = Array(type).fill('')
     const arrBoard: number[] = [...Array(type * type).keys()]
+    const ltrCrossLines: number[] = []
+    const rtlCrossLines: number[] = []
 
     return arrLinesByType.reduce((arr: number[][], _: string, rootIdx: number) => {
       const horizontalLines: number[] = arrBoard.slice(rootIdx * type, rootIdx * type + type)
@@ -16,8 +17,7 @@ export const useCalculate = ({ type }: CalculatePropType) => {
         (_, childIdx: number) => arrBoard[rootIdx + childIdx * type]
       )
 
-      arr.push(horizontalLines)
-      arr.push(verticalLines)
+      arr.push(horizontalLines, verticalLines)
       return arr
     }, [])
   }, [type])
