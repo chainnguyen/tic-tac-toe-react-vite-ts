@@ -1,8 +1,8 @@
-export interface CommonObject {
+export interface ICommonObject {
   [key: string]: any
 }
 
-export interface ReducerActionType {
+export interface IReducerActionType {
   type: string
   payload?: object
 }

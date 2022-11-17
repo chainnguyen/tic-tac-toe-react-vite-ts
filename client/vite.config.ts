@@ -1,3 +1,6 @@
+/// <reference types="vitest" />
+/// <reference types="vite/client" />
+
 import react from '@vitejs/plugin-react'
 import dayjs from 'dayjs'
 import * as path from 'path'
@@ -60,6 +63,12 @@ export default defineConfig({
         },
       ],
     },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['src/**/*.{test,spec}.{jsx,tsx}'],
+    setupFiles: './setup.test.ts'
   },
   plugins: [react()],
 });

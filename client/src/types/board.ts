@@ -1,16 +1,16 @@
-import { StateType } from '@/types/game'
+import { IStateType } from '@/types/game'
 
 export type BoardType = {
   box: string
   isRewardBox: boolean
 }
 
-export interface BoardPropType {
-  state: StateType
+export interface IBoardPropType {
+  state: IStateType
   onClick: (i: number) => void
 }
 
-export interface BoardBoxPropType {
+export interface IBoardBoxPropType {
   id: number
   value: BoardType
   type: number

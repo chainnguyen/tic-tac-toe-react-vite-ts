@@ -2,7 +2,7 @@ import { BoardType } from '@/types/board'
 
 export type StatusGame = 'unfinished' | 'finished' | 'full-board'
 
-export interface StateType {
+export interface IStateType {
   type: number
   status: StatusGame
   xIsNext: boolean
@@ -10,20 +10,20 @@ export interface StateType {
   arrBoard: BoardType[]
 }
 
-export interface TicTacToeRefType {
+export interface ITicTacToeRefType {
   reset: () => void
 }
 
-export interface TicTacToePropType {
+export interface ITicTacToePropType {
   type: number
   controller: any
 }
 
-export interface TicTacToeWinnerType {
+export interface ITicTacToeWinnerType {
   status: StatusGame
   resultBoardWon: BoardType[]
 }
 
-export interface CalculatePropType {
+export interface ICalculatePropType {
   type: number
 }

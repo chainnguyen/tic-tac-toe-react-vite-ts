@@ -7,25 +7,28 @@ import {
   useImperativeHandle,
   ForwardedRef
 } from 'react'
+
 // Hooks
 import { cloneDeep } from 'lodash-es'
 import { useSelector } from 'react-redux'
 import { useSocket } from '@/hooks/useSocket'
 import { useCalculate } from '@/hooks/useCalculate'
+
 // Components
 import Board from '@/components/Board'
+
 // Types
-import { ReducerActionType } from '@/types/common/global'
+import { IReducerActionType } from '@/types/common/global'
 import {
-  TicTacToePropType,
-  TicTacToeRefType,
-  StateType
+  ITicTacToePropType,
+  ITicTacToeRefType,
+  IStateType
 } from '@/types/game'
 import { BoardType } from '@/types/board'
 import { RootState } from '@/store/root/root-state'
 
-const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTacToeRefType>) => {
-  const initialState: StateType = {
+const TicTacToe = forwardRef( (props: ITicTacToePropType, ref: ForwardedRef<ITicTacToeRefType>) => {
+  const initialState: IStateType = {
     type: props.type,
     status: 'unfinished',
     xIsNext: true, // 'X' go first
@@ -33,7 +36,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
     arrBoard: [],
   }
 
-  const reducer = (state: StateType, action: ReducerActionType): StateType => {
+  const reducer = (state: IStateType, action: IReducerActionType): IStateType => {
     const { type, payload } = action
 
     switch (type) {
@@ -48,7 +51,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
   }
 
   const { socketEmit, socketListen } = useSocket()
-  const isSocketConnected = useSelector((state: RootState) => state['root'].isSocketConnected)
+  const isSocketConnected = useSelector((state: { root: RootState }) => state['root'].isSocketConnected)
   const [state, dispatch] = useReducer(reducer, initialState)
   const { ticTacToeWinner } = useCalculate({ type: state.type })
 
@@ -71,15 +74,19 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
   useEffect(() => {
     if (!isSocketConnected) return
 
-    socketListen('UPDATE_PLAYING_ACTION', (payloadFmServer: StateType) => {
+    socketListen('CONNECT_COUNTER', (payloadFmServer: number) => {
+      console.log('connectCounter - client', payloadFmServer)
+    })
+
+    socketListen('UPDATE_PLAYING_ACTION', (payloadFmServer: IStateType) => {
       dispatch({ type: 'PLAYING', payload: payloadFmServer })
     })
 
-    socketListen('UPDATE_WAS_WINNER', (payloadFmServer: StateType) => {
+    socketListen('UPDATE_WAS_WINNER', (payloadFmServer: IStateType) => {
       dispatch({ type: 'FINISHED', payload: payloadFmServer })
     })
 
-    socketListen('UPDATE_RESET_GAME', (payloadFmServer: StateType) => {
+    socketListen('UPDATE_RESET_GAME', (payloadFmServer: IStateType) => {
       dispatch({ type: 'RESET', payload: payloadFmServer })
     })
   }, [isSocketConnected])
@@ -141,7 +148,7 @@ const TicTacToe = forwardRef( (props: TicTacToePropType, ref: ForwardedRef<TicTa
         message = 'Winner: ' + (!state.xIsNext ? 'X' : 'O')
         break
       case 'full-board':
-        message = 'Cuộc sống mà! Hơn thua nhau làm gì bạn ơi...'
+        message = 'That life! More than losing, my friend...'
         break
       default:
         message = state.xIsNext ? 'Your turn' : `Enemy's turn`

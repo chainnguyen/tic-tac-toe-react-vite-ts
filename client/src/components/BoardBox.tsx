@@ -3,9 +3,9 @@ import { useMemo } from 'react'
 // Others
 import { LIST_TYPES } from '@/enums/game.enum'
 // Types
-import { BoardBoxPropType } from '@/types/board'
+import { IBoardBoxPropType } from '@/types/board'
 
-function BoardBox(props: BoardBoxPropType) {
+function BoardBox(props: IBoardBoxPropType) {
   const { id, type, value, onClick } = props
 
   const fontSizeByType = useMemo<number>(

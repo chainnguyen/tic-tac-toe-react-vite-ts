@@ -2,9 +2,9 @@
 import { useMemo } from 'react'
 // Types
 import { BoardType } from '@/types/board'
-import { CalculatePropType, TicTacToeWinnerType } from '@/types/game'
+import { ICalculatePropType, ITicTacToeWinnerType } from '@/types/game'
 
-export const useCalculate = ({ type }: CalculatePropType) => {
+export const useCalculate = ({ type }: ICalculatePropType) => {
   const memoListReward = useMemo<number[][]>(() => {
     const arrLinesByType: string[] = Array(type).fill('')
     const arrBoard: number[] = [...Array(type * type).keys()]
@@ -17,14 +17,16 @@ export const useCalculate = ({ type }: CalculatePropType) => {
         (_, childIdx: number) => arrBoard[rootIdx + childIdx * type]
       )
 
-      arr.push(horizontalLines, verticalLines)
+      ltrCrossLines.push(horizontalLines[rootIdx])
+      rtlCrossLines.push(verticalLines[(verticalLines.length - 1) - rootIdx])
+      arr.push(horizontalLines, verticalLines, ltrCrossLines, rtlCrossLines)
       return arr
     }, [])
   }, [type])
 
-  const ticTacToeWinner = (board: BoardType[]): TicTacToeWinnerType => {
+  const ticTacToeWinner = (board: BoardType[]): ITicTacToeWinnerType => {
     const cloneBoard: BoardType[] = [...board]
-    const initObj: TicTacToeWinnerType = { status: 'unfinished', resultBoardWon: cloneBoard }
+    const initObj: ITicTacToeWinnerType = { status: 'unfinished', resultBoardWon: cloneBoard }
 
     if (!cloneBoard.length) return initObj
 

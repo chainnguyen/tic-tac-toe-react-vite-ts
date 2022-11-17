@@ -7,7 +7,7 @@ import TicTacToe from '@/components/TicTacToe'
 // Others
 import { LIST_TYPES } from '@/enums/game.enum'
 // Types
-import { TicTacToeRefType, StatusGame } from '@/types/game'
+import { ITicTacToeRefType, StatusGame } from '@/types/game'
 
 function Home() {
   const {
@@ -17,7 +17,7 @@ function Home() {
     socketDisconnect
   } = useSocket()
 
-  const ticTacToeRef = useRef<TicTacToeRefType | null>(null)
+  const ticTacToeRef = useRef<ITicTacToeRefType | null>(null)
   const [typeGame, setTypeGame] = useState<number>(LIST_TYPES[0].type)
   const [playing, setPlaying] = useState<boolean>(false)
   const [status, setStatus] = useState<StatusGame>('unfinished')
@@ -63,7 +63,7 @@ function Home() {
 
   return (
     <>
-      <section className="game-control">
+      <section data-testid="gameControl" className="game-control">
         <select className="game-control__type"
                 disabled={playing}
                 value={typeGame}
@@ -76,7 +76,8 @@ function Home() {
           ))}
         </select>
 
-        <button className="game-control__reset"
+        <button data-testid="resetButton"
+                className="game-control__reset"
                 type="button"
                 disabled={!playing && status === 'unfinished'}
                 onClick={resetGame}>
@@ -84,7 +85,7 @@ function Home() {
         </button>
       </section>
 
-      <section className="sec-game">
+      <section data-testid="sectionGame"  className="sec-game">
         <TicTacToe ref={ticTacToeRef}
                    type={typeGame}
                    controller={{ setPlaying }}

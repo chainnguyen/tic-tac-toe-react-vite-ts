@@ -1,9 +1,9 @@
 // Components
 import BoardBox from '@/components/BoardBox'
 // Types
-import { BoardPropType, BoardType } from '@/types/board'
+import { IBoardPropType, BoardType } from '@/types/board'
 
-function Board({ state, onClick }: BoardPropType) {
+function Board({ state, onClick }: IBoardPropType) {
   return (
     <>
       {state.arrBoard.map((item: BoardType, index: number) =>
