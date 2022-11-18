@@ -67,8 +67,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    reporters: 'verbose',
     include: ['src/**/*.{test,spec}.{jsx,tsx}'],
-    setupFiles: './setup.test.ts'
+    setupFiles: './src/test/setup.ts'
   },
   plugins: [react()],
 });

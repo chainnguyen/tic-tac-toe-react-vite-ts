@@ -6,10 +6,12 @@ import { useSocket } from '@/hooks/useSocket'
 import TicTacToe from '@/components/TicTacToe'
 // Others
 import { LIST_TYPES } from '@/enums/game.enum'
+import { SERVER_PORT } from '@/enums/socket.enum'
 // Types
 import { ITicTacToeRefType, StatusGame } from '@/types/game'
+import { ICommonProps } from '@/types/common/global'
 
-function Home() {
+function Home({ onClickForTest }: ICommonProps) {
   const {
     socketConnect,
     socketEmit,
@@ -24,7 +26,7 @@ function Home() {
 
   // Initial socket
   useEffect( () => {
-    socketConnect('ws://localhost:5000')
+    socketConnect(SERVER_PORT)
       .then((): void => eventsCallCenter())
     return () => { socketDisconnect() }
   },[])
@@ -58,13 +60,15 @@ function Home() {
   }
 
   const resetGame = (): void => {
+    onClickForTest && onClickForTest()
     ticTacToeRef.current?.reset()
   }
 
   return (
     <>
-      <section data-testid="gameControl" className="game-control">
-        <select className="game-control__type"
+      <section className="game-control">
+        <select data-testid="gameControl"
+                className="game-control__type"
                 disabled={playing}
                 value={typeGame}
                 onChange={e => switchTypeGame(+e.target.value)}
@@ -76,7 +80,7 @@ function Home() {
           ))}
         </select>
 
-        <button data-testid="resetButton"
+        <button data-testid="resetGameButton"
                 className="game-control__reset"
                 type="button"
                 disabled={!playing && status === 'unfinished'}
@@ -85,7 +89,7 @@ function Home() {
         </button>
       </section>
 
-      <section data-testid="sectionGame"  className="sec-game">
+      <section className="sec-game">
         <TicTacToe ref={ticTacToeRef}
                    type={typeGame}
                    controller={{ setPlaying }}

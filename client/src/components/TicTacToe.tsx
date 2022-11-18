@@ -170,7 +170,8 @@ const TicTacToe = forwardRef( (props: ITicTacToePropType, ref: ForwardedRef<ITic
   }
 
   return (
-    <div className="game-container"
+    <div data-testid="TicTacToeComponent"
+         className="game-container"
          style={{ ['--layout-by-type' as string]: state.type }}>
 
       <h1 className="game-message">{renderMessage()}</h1>

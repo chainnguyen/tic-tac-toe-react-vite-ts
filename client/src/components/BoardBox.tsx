@@ -16,9 +16,11 @@ function BoardBox(props: IBoardBoxPropType) {
   return (
     <>
       <button
+        role="button"
         className={`board-box ${value.isRewardBox ? 'reward-box' : ''}`}
         style={{ ['--font-size-by-type' as string]: String(fontSizeByType) + 'vw' }}
-        onClick={() => onClick(+id)}>
+        onClick={() => onClick(+id)}
+      >
         {value.box}
       </button>
     </>

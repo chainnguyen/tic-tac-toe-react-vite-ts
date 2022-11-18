@@ -7,5 +7,9 @@ export interface IReducerActionType {
   payload?: object
 }
 
-
 export type EmitType = string | number | object
+
+export interface ICommonProps {
+  onClick?: () => void
+  onClickForTest?: () => void
+}

@@ -2,7 +2,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { BrowserRouter as Router } from 'react-router-dom'
 import { store } from './store'
 // Components
 import App from './App'
@@ -11,13 +10,9 @@ import * as serviceWorker from './serviceWorker'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <Router>
-        <App />
-      </Router>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <App />
+  </Provider>
 )
 
 // If you want your app to work offline and load faster, you can change

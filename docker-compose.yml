@@ -9,6 +9,8 @@ services:
       - ./client/:${DOCKER_WORKING_DIR}
     ports:
       - "3000:3000"
+      # port for test --ui
+      - "51204:51204"
     command: "yarn start"
     networks:
       - app-network
