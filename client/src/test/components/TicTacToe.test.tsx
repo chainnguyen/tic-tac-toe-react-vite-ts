@@ -1,25 +1,30 @@
 // Core
+import { ReactElement } from 'react'
+import { store } from '@/store'
+import { Provider } from 'react-redux'
 import { it, describe, expect, vi, assertType, expectTypeOf } from 'vitest'
-import { emulatorCensorObject, fireEvent } from '@/test/utils'
+import { render, RenderResult } from '@/test/utils'
 // Censorship object
 import TicTacToe from '@/components/TicTacToe'
 // Others
 
 // Types
 import { ITicTacToePropType } from '@/types/game'
+import { ICommonProps } from '@/types/common/global'
 
-// const emulatorCensorObject = (props?: Partial<ICommonProps | any>, ui?: ReactElement): RenderResult => {
-//   return render(ui ||
-//     <Provider store={store}>
-//       <TicTacToe type={3}
-//                  controller={vi.fn()}
-//                  {...props}
-//       />
-//     </Provider>
-//   )
-// }
-
-emulatorCensorObject({}, <TicTacToe type={3} controller={vi.fn()}/>)
+const emulatorCensorObject = (
+  props?: Partial<ICommonProps | any>,
+  ui?: ReactElement
+): RenderResult => {
+  return render(ui ||
+    <Provider store={store}>
+      <TicTacToe type={3}
+                 controller={vi.fn()}
+                 {...props}
+      />
+    </Provider>
+  )
+}
 
 describe('TicTacToeComponent', () => {
   // Happy cases

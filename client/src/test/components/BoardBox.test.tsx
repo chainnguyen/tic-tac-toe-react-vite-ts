@@ -1,26 +1,26 @@
 // Core
+import { ReactElement } from 'react'
 import { it, describe, expect, vi, expectTypeOf, assertType } from 'vitest'
-import { emulatorCensorObject, fireEvent } from '@/test/utils'
+import { render, RenderResult } from '@/test/utils'
 // Censorship object
 import BoardBox from '@/components/BoardBox'
 // Types
 import { IBoardBoxPropType } from '@/types/board'
+import { ICommonProps } from '@/types/common/global'
 
-// const emulatorCensorObject = (props?: Partial<ICommonProps | any>, ui?: ReactElement): RenderResult => {
-//   return render(ui ||
-//     <BoardBox id={0}
-//               value={{ box: 'X', isRewardBox: false }}
-//               type={3}
-//               onClick={vi.fn()}
-//               {...props}
-//     />
-//   )
-// }
-
-emulatorCensorObject({}, <BoardBox id={0}
-                                   value={{ box: 'X', isRewardBox: false }}
-                                   type={3}
-                                   onClick={vi.fn()}/>)
+const emulatorCensorObject = (
+  props?: Partial<ICommonProps | any>,
+  ui?: ReactElement
+): RenderResult => {
+  return render(ui ||
+    <BoardBox id={0}
+              value={{ box: 'X', isRewardBox: false }}
+              type={3}
+              onClick={vi.fn()}
+              {...props}
+    />
+  )
+}
 
 describe('BoardBoxComponent', () => {
   // Happy cases
